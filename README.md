@@ -1,7 +1,7 @@
-# ProjectFinalUdacity
-
 ## Prerequisites
-- Node.js version **14.x** or higher
-- npm (Node Package Manager)
+To run this project, ensure you have the following installed:
 
-Ensure you have the correct version of Node.js installed to avoid compatibility issues.
+- **Node.js**: v20.12.2  
+  Run the following command to verify your Node.js version:
+  ```bash
+  node --version
