@@ -2,12 +2,13 @@
   "name": "projectfinaludacity",
   "version": "1.0.0",
   "main": "index.js",
- "scripts": {
-  "start": "node server.js",
-  "build": "webpack --config webpack.config.js",
+"scripts": {
+  "start": "node src/server/server.js",
+  "build": "webpack --mode production",
   "test": "jest",
   "dev": "webpack serve --config webpack.config.js --open"
-},
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
