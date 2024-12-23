@@ -1,10 +1,10 @@
 const path = require('path');
-const WorkboxPlugin = require('workbox-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
   entry: './src/client/index.js',
-  mode: process.env.NODE_ENV || 'development',
+  mode: 'development',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'main.js',
@@ -18,9 +18,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        use: 'babel-loader',
       },
       {
         test: /\.scss$/,

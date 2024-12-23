@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const fetch = require('node-fetch');
 
 const app = express();
 const port = 8081;
@@ -21,6 +22,15 @@ const projectData = {
 
 app.get('/data', (req, res) => {
   res.send(projectData);
+});
+
+app.post('/add', (req, res) => {
+  const { city, country, weather, imageURL } = req.body;
+  projectData.city = city;
+  projectData.country = country;
+  projectData.weather = weather;
+  projectData.imageURL = imageURL;
+  res.send({ message: 'Data added successfully' });
 });
 
 app.listen(port, () => {

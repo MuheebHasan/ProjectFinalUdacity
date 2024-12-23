@@ -1,62 +1,42 @@
-const fetch = require('node-fetch');
-
-const baseURLs = {
-  geonames: 'http://api.geonames.org/searchJSON?q=',
-  weatherbit: 'https://api.weatherbit.io/v2.0/current?city=',
-  pixabay: 'https://pixabay.com/api/?key=',
-};
-
-const apiKeys = {
-  geonames: 'YOUR_GEONAMES_API_KEY',
-  weatherbit: 'YOUR_WEATHERBIT_API_KEY',
-  pixabay: 'YOUR_PIXABAY_API_KEY',
-};
-
-// Placeholder object with default values
-const projectData = {
-  city: '',
-  country: '',
-  weather: '',
-  imageURL: '',
-};
-
-// Primary function to fetch data
-const performAction = async () => {
+export const performAction = async () => {
   const city = document.getElementById('city').value;
-
   if (!city) {
     alert('Please enter a city name!');
     return;
   }
 
+  // Fetch data from APIs
+  const geonamesUrl = `https://api.geonames.org/searchJSON?q=${city}&username=demo`;
+  const weatherUrl = `https://api.weatherbit.io/v2.0/current?city=${city}&key=YOUR_WEATHERBIT_API_KEY`;
+  const pixabayUrl = `https://pixabay.com/api/?key=YOUR_PIXABAY_API_KEY&q=${city}&image_type=photo`;
+
   try {
-    // 1. Geonames API: Get City & Country Info
-    const geoRes = await fetch(`${baseURLs.geonames}${city}&maxRows=1&username=${apiKeys.geonames}`);
-    const geoData = await geoRes.json();
-    projectData.city = geoData.geonames[0].name;
-    projectData.country = geoData.geonames[0].countryName;
+    const geonamesResponse = await fetch(geonamesUrl);
+    const weatherResponse = await fetch(weatherUrl);
+    const pixabayResponse = await fetch(pixabayUrl);
 
-    // 2. Weatherbit API: Get Weather Info
-    const weatherRes = await fetch(`${baseURLs.weatherbit}${city}&key=${apiKeys.weatherbit}`);
-    const weatherData = await weatherRes.json();
-    projectData.weather = weatherData.data[0].weather.description;
+    const geonamesData = await geonamesResponse.json();
+    const weatherData = await weatherResponse.json();
+    const pixabayData = await pixabayResponse.json();
 
-    // 3. Pixabay API: Get City Image
-    const pixabayRes = await fetch(`${baseURLs.pixabay}${apiKeys.pixabay}&q=${city}&image_type=photo`);
-    const pixabayData = await pixabayRes.json();
-    projectData.imageURL = pixabayData.hits[0].webformatURL;
+    const newEntry = {
+      city: geonamesData.geonames[0]?.name || 'Unknown',
+      country: geonamesData.geonames[0]?.countryName || 'Unknown',
+      weather: weatherData.data[0]?.weather.description || 'Unknown',
+      imageURL: pixabayData.hits[0]?.webformatURL || '',
+    };
 
-    // Update the UI
-    document.getElementById('results').innerHTML = `
-      <p>City: ${projectData.city}</p>
-      <p>Country: ${projectData.country}</p>
-      <p>Weather: ${projectData.weather}</p>
-      <img src="${projectData.imageURL}" alt="${city}">
-    `;
+    // Post data to the server
+    await fetch('/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newEntry),
+    });
+
+    alert('Data fetched and stored successfully!');
   } catch (error) {
     console.error('Error:', error);
-    alert('Failed to fetch data. Please try again!');
   }
 };
-
-export { performAction };
