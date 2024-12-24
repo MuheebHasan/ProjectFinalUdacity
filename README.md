@@ -1,7 +1,8 @@
-## Prerequisites
-To run this project, ensure you have the following installed:
+## Travel App Project
 
-- **Node.js**: v20.12.2  
-  Run the following command to verify your Node.js version:
+This project is a travel planning app built with Node.js, Webpack, and APIs such as Geonames, Weatherbit, and Pixabay.
+
+### Prerequisites
+- **Node.js**: Ensure Node.js version `>=20.0.0` is installed.
   ```bash
   node --version
