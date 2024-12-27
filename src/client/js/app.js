@@ -6,24 +6,23 @@ export const performAction = async () => {
   }
 
   // Fetch data from APIs
-  const geonamesUrl = `https://api.geonames.org/searchJSON?q=${city}&username=demo`;
-  const weatherUrl = `https://api.weatherbit.io/v2.0/current?city=${city}&key=YOUR_WEATHERBIT_API_KEY`;
-  const pixabayUrl = `https://pixabay.com/api/?key=YOUR_PIXABAY_API_KEY&q=${city}&image_type=photo`;
+  const geonamesUrl = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=1e25db6198c048f6a47ba0ff1f6752a3`;
+  const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=0003ae563de941a5856135010242712&q=${city}`;
 
   try {
+    // Fetch data from OpenCage Geocoder
     const geonamesResponse = await fetch(geonamesUrl);
-    const weatherResponse = await fetch(weatherUrl);
-    const pixabayResponse = await fetch(pixabayUrl);
-
     const geonamesData = await geonamesResponse.json();
+
+    // Fetch data from WeatherAPI
+    const weatherResponse = await fetch(weatherUrl);
     const weatherData = await weatherResponse.json();
-    const pixabayData = await pixabayResponse.json();
 
     const newEntry = {
-      city: geonamesData.geonames[0]?.name || 'Unknown',
-      country: geonamesData.geonames[0]?.countryName || 'Unknown',
-      weather: weatherData.data[0]?.weather.description || 'Unknown',
-      imageURL: pixabayData.hits[0]?.webformatURL || '',
+      city: geonamesData.results[0]?.components.city || 'Unknown',
+      country: geonamesData.results[0]?.components.country || 'Unknown',
+      weather: weatherData.current?.condition.text || 'Unknown',
+      temperature: weatherData.current?.temp_c || 'N/A', // Adding temperature as an example
     };
 
     // Post data to the server
