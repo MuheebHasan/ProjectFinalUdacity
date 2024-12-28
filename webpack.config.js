@@ -2,9 +2,11 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 
+const mode = process.env.NODE_ENV || 'development';
+
 module.exports = {
   entry: './src/client/index.js',
-  mode: 'development',
+  mode,
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'main.js',
@@ -30,9 +32,13 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/client/views/index.html',
     }),
-    new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-    }),
+    ...(mode === 'production'
+      ? [
+          new WorkboxPlugin.GenerateSW({
+            clientsClaim: true,
+            skipWaiting: true,
+          }),
+        ]
+      : []),
   ],
 };
