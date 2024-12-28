@@ -4,54 +4,42 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 
 const app = express();
-const port = 8081;
-
-// Middleware
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static('dist'));
 
 // Routes for API calls
-app.post('/geonames', async (req, res) => {
+app.post('/getData', async (req, res) => {
   const { city } = req.body;
-  const geonamesUrl = `https://api.geonames.org/searchJSON?q=${city}&username=YOUR_GEONAMES_USERNAME`;
+
+  // تحديث روابط API بمفاتيحك الفعلية
+  const geonamesUrl = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=1e25db6198c048f6a47ba0ff1f6752a3`;
+  const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=0003ae563de941a5856135010242712&q=${city}`;
 
   try {
-    const response = await fetch(geonamesUrl);
-    const data = await response.json();
-    res.send(data);
+    // Fetch data from OpenCage Geocoder
+    const geonamesResponse = await fetch(geonamesUrl);
+    const geonamesData = await geonamesResponse.json();
+
+    // Fetch data from WeatherAPI
+    const weatherResponse = await fetch(weatherUrl);
+    const weatherData = await weatherResponse.json();
+
+    const responseData = {
+      city: geonamesData.results[0]?.components.city || 'Unknown',
+      country: geonamesData.results[0]?.components.country || 'Unknown',
+      weather: weatherData.current?.condition.text || 'Unknown',
+      temperature: weatherData.current?.temp_c || 'N/A',
+    };
+
+    res.send(responseData);
   } catch (error) {
-    res.status(500).send({ error: 'Failed to fetch data from Geonames' });
+    console.error('Error fetching data from APIs:', error);
+    res.status(500).send({ error: 'Failed to fetch data from APIs' });
   }
 });
 
-app.post('/weather', async (req, res) => {
-  const { city } = req.body;
-  const weatherUrl = `https://api.weatherbit.io/v2.0/current?city=${city}&key=YOUR_WEATHERBIT_API_KEY`;
-
-  try {
-    const response = await fetch(weatherUrl);
-    const data = await response.json();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send({ error: 'Failed to fetch data from Weatherbit' });
-  }
-});
-
-app.post('/pixabay', async (req, res) => {
-  const { city } = req.body;
-  const pixabayUrl = `https://pixabay.com/api/?key=YOUR_PIXABAY_API_KEY&q=${city}&image_type=photo`;
-
-  try {
-    const response = await fetch(pixabayUrl);
-    const data = await response.json();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send({ error: 'Failed to fetch data from Pixabay' });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server running on localhost:${port}`);
+// Start server
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
