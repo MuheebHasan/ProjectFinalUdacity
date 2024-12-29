@@ -1,18 +1,18 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WorkboxPlugin = require('workbox-webpack-plugin');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import WorkboxPlugin from 'workbox-webpack-plugin';
 
 const mode = process.env.NODE_ENV || 'development';
 
-module.exports = {
+export default {
   entry: './src/client/index.js',
   mode,
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve('dist'),
     filename: 'main.js',
   },
   devServer: {
-    static: path.resolve(__dirname, 'dist'),
+    static: path.resolve('dist'),
     port: 8080,
   },
   module: {

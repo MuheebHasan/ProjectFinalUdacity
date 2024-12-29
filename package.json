@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server/server.js",
-    "build": "NODE_ENV=production webpack --mode production",
+    "build": "set NODE_ENV=production && webpack --mode production",
     "test": "jest",
     "dev": "NODE_ENV=development webpack serve --config webpack.config.js --open"
   },
@@ -25,8 +25,8 @@
     "sass": "^1.55.0",
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
-    "webpack": "^5.70.0",
-    "webpack-cli": "^4.9.2",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.7.4",
     "workbox-webpack-plugin": "^6.4.2"
   },
