@@ -11,12 +11,10 @@ app.use(cors());
 app.post('/getData', async (req, res) => {
   const { city } = req.body;
 
-  // التحقق من صحة المدخلات
   if (!city || typeof city !== 'string' || city.trim() === '') {
-    return res.status(400).send({ error: 'Invalid city name' });
+    return res.status(400).send({ error: 'Invalid city name. Please provide a valid city name.' });
   }
 
-  // تحديث روابط API بمفاتيحك الفعلية
   const geonamesUrl = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=1e25db6198c048f6a47ba0ff1f6752a3`;
   const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=0003ae563de941a5856135010242712&q=${city}`;
 
@@ -28,6 +26,10 @@ app.post('/getData', async (req, res) => {
     }
     const geonamesData = await geonamesResponse.json();
 
+    if (!geonamesData.results || geonamesData.results.length === 0) {
+      return res.status(404).send({ error: 'No data found for the entered city.' });
+    }
+
     // Fetch data from WeatherAPI
     const weatherResponse = await fetch(weatherUrl, { timeout: 5000 });
     if (!weatherResponse.ok) {
@@ -35,7 +37,6 @@ app.post('/getData', async (req, res) => {
     }
     const weatherData = await weatherResponse.json();
 
-    // إنشاء الرد
     const responseData = {
       city: geonamesData.results[0]?.components.city || 'Unknown',
       country: geonamesData.results[0]?.components.country || 'Unknown',
@@ -46,7 +47,7 @@ app.post('/getData', async (req, res) => {
     res.send(responseData);
   } catch (error) {
     console.error('Error fetching data from APIs:', error.message);
-    res.status(500).send({ error: error.message });
+    res.status(500).send({ error: `Server Error: ${error.message}` });
   }
 });
 
