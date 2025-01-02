@@ -14,8 +14,9 @@ export const performAction = async () => {
   }
 
   try {
-    // Send data to the server
-    const response = await fetch('/getData', {
+    console.log('Sending request to server:', { city, date });
+
+    const response = await fetch('http://localhost:3000/getData', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,19 +24,21 @@ export const performAction = async () => {
       body: JSON.stringify({ city, date }),
     });
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
       alert(`Error fetching data: ${response.statusText}`);
       return;
     }
 
     const data = await response.json();
+    console.log('Received data:', data);
 
     if (!data || !data.city || !data.weather) {
       alert('No data found for the entered city!');
       return;
     }
 
-    // Display results
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = `
       <p><strong>City:</strong> ${data.city}</p>

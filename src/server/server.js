@@ -11,12 +11,14 @@ app.use(cors());
 app.post('/getData', async (req, res) => {
   const { city } = req.body;
 
+  // Validate input
   if (!city || typeof city !== 'string' || city.trim() === '') {
     return res.status(400).send({ error: 'Invalid city name. Please provide a valid city name.' });
   }
 
-  const geonamesUrl = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=1e25db6198c048f6a47ba0ff1f6752a3`;
-  const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=0003ae563de941a5856135010242712&q=${city}`;
+  // Construct API URLs
+  const geonamesUrl = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=1e25db6198c048f6a47ba0ff1f6752a3`;
+  const weatherUrl = `https://api.weatherapi.com/v1/current.json?key=0003ae563de941a5856135010242712&q=${encodeURIComponent(city)}`;
 
   try {
     // Fetch data from OpenCage Geocoder
@@ -37,14 +39,16 @@ app.post('/getData', async (req, res) => {
     }
     const weatherData = await weatherResponse.json();
 
+    // Construct the response
     const responseData = {
-      city: geonamesData.results[0]?.components.city || 'Unknown',
+      city: geonamesData.results[0]?.components.city || city,
       country: geonamesData.results[0]?.components.country || 'Unknown',
       weather: weatherData.current?.condition.text || 'Unknown',
       temperature: weatherData.current?.temp_c || 'N/A',
     };
 
-    res.send(responseData);
+    // Send response
+    res.status(200).send(responseData);
   } catch (error) {
     console.error('Error fetching data from APIs:', error.message);
     res.status(500).send({ error: `Server Error: ${error.message}` });
