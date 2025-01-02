@@ -1,4 +1,9 @@
 import { performAction } from './js/app.js';
 import './styles/style.scss';
 
-document.getElementById('generate').addEventListener('click', performAction);
+const generateButton = document.getElementById('generate');
+if (generateButton) {
+  generateButton.addEventListener('click', performAction);
+} else {
+  console.error('Button with ID "generate" not found in the DOM!');
+}
